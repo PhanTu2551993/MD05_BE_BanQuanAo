@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ra.project_md05.constans.EHttpStatus;
+import ra.project_md05.constants.EHttpStatus;
 import ra.project_md05.exception.CustomException;
 import ra.project_md05.model.dto.response.ResponseWrapper;
 

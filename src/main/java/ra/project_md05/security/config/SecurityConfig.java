@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import ra.project_md05.constans.RoleName;
+import ra.project_md05.constants.RoleName;
 import ra.project_md05.exception.AccessDenied;
 import ra.project_md05.exception.JwtEntryPoint;
 import ra.project_md05.security.jwt.JwtTokenFilter;

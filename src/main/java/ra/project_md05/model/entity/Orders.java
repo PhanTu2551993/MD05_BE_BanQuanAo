@@ -2,7 +2,7 @@ package ra.project_md05.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ra.project_md05.constans.OrderStatus;
+import ra.project_md05.constants.OrderStatus;
 
 import java.util.Date;
 

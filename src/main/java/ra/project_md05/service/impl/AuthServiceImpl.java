@@ -1,7 +1,6 @@
 package ra.project_md05.service.impl;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -9,7 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ra.project_md05.constans.RoleName;
+import ra.project_md05.constants.RoleName;
 import ra.project_md05.model.dto.request.FormLogin;
 import ra.project_md05.model.dto.request.FormRegister;
 import ra.project_md05.model.dto.response.JwtResponse;
