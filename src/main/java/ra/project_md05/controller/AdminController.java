@@ -134,4 +134,33 @@ public class AdminController {
         productService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    // API: Chức năng Tìm kiếm Sản phẩm theo tên.
+    @GetMapping("/products/search")
+    public ResponseEntity<?> search(@RequestParam(name = "search") String search) {
+        List<Product> productList = productService.findByNameOrDescriptionContaining(search);
+        if (productList.isEmpty()) {
+            return new ResponseEntity<>("Không tìm thấy Sản phẩm có tên: " + search, HttpStatus.NOT_FOUND);
+        }
+        return getResponseEntity(productList);
+    }
+
+    // Chuyển đổi đối tượng Product
+    private ResponseEntity<?> getResponseEntity(List<Product> productList) {
+        List<ProductResponse> productResponses = productList.stream()
+                .map(this::convertToProductResponse)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(productResponses, HttpStatus.OK), HttpStatus.OK);
+    }
+
+    private ProductResponse convertToProductResponse(Product product) {
+        return ProductResponse.builder()
+                .id(product.getProductId())
+                .sku(product.getSku())
+                .productName(product.getProductName())
+                .description(product.getDescription())
+                .imageUrl(product.getImage())
+                .categoryId(product.getCategory().getCategoryId())
+                .createdAt(product.getUpdatedAt())
+                .build();
+    }
 }

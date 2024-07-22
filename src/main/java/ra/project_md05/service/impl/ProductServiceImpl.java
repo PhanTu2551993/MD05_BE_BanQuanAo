@@ -17,6 +17,7 @@ import ra.project_md05.service.ProductService;
 import ra.project_md05.service.UploadService;
 
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -71,6 +72,11 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Product not found with id " + id));
         productRepository.delete(product);
+    }
+
+    @Override
+    public List<Product> findByNameOrDescriptionContaining(String searchTerm) {
+        return productRepository.findByNameOrDescriptionContaining(searchTerm);
     }
 
     private ProductResponse convertToResponse(Product product) {

@@ -58,9 +58,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         url -> url
-//                                .requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleName.ADMIN.name())
-//                                .requestMatchers("/api/v1/manager/**").hasAnyAuthority(RoleName.MANAGER.name())
-//                                .requestMatchers("/api/v1/user/**").hasAnyAuthority(RoleName.USER.name())
+                                .requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleName.ADMIN.name())
+                                .requestMatchers("/api/v1/manager/**").hasAnyAuthority(RoleName.MANAGER.name())
+                                .requestMatchers("/api/v1/user/**").hasAnyAuthority(RoleName.USER.name())
                                 .anyRequest().permitAll()//còn lại không cần xác thực
                 )
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
