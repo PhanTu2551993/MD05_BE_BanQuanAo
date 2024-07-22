@@ -40,7 +40,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.cors(config -> config.configurationSource(request -> {
+        return http
+                .cors(config -> config.configurationSource(request -> {
                     CorsConfiguration cf = new CorsConfiguration();
                     cf.setAllowedOrigins(List.of("http://localhost:5173/"));
                     cf.setAllowedMethods(List.of("*"));
@@ -58,9 +59,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         url -> url
-//                                .requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleName.ADMIN.name())
-//                                .requestMatchers("/api/v1/manager/**").hasAnyAuthority(RoleName.MANAGER.name())
-//                                .requestMatchers("/api/v1/user/**").hasAnyAuthority(RoleName.USER.name())
+                                .requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleName.ROLE_ADMIN.name())
+                                .requestMatchers("/api/v1/manager/**").hasAnyAuthority(RoleName.ROLE_MANAGER.name())
+                                .requestMatchers("/api/v1/user/**").hasAnyAuthority(RoleName.ROLE_USER.name())
                                 .anyRequest().permitAll()//còn lại không cần xác thực
                 )
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
