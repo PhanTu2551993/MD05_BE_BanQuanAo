@@ -17,11 +17,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import ra.project_md05.constans.RoleName;
 import ra.project_md05.exception.AccessDenied;
 import ra.project_md05.exception.JwtEntryPoint;
 import ra.project_md05.security.jwt.JwtTokenFilter;
 import ra.project_md05.security.principal.UserDetailCustomService;
+
+import java.util.List;
 
 
 @Configuration
@@ -38,6 +41,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(config -> config.configurationSource(request -> {
+                    CorsConfiguration cf = new CorsConfiguration();
+                    cf.setAllowedOrigins(List.of("http://localhost:5173/"));
+                    cf.setAllowedMethods(List.of("*"));
+                    cf.setAllowCredentials(true);
+                    cf.setAllowedHeaders(List.of("*"));
+                    cf.setExposedHeaders(List.of("*"));
+                    return cf;
+                }))
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(
                         exception -> exception
@@ -46,9 +58,10 @@ public class SecurityConfig {
                 )
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
-                        url -> url.requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleName.ADMIN.name())
-                                .requestMatchers("/api/v1/manager/**").hasAnyAuthority(RoleName.MANAGER.name())
-                                .requestMatchers("/api/v1/user/**").hasAnyAuthority(RoleName.USER.name())
+                        url -> url
+                                .requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleName.ROLE_ADMIN.name())
+                                .requestMatchers("/api/v1/manager/**").hasAnyAuthority(RoleName.ROLE_MANAGER.name())
+                                .requestMatchers("/api/v1/user/**").hasAnyAuthority(RoleName.ROLE_USER.name())
                                 .anyRequest().permitAll()//còn lại không cần xác thực
                 )
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
