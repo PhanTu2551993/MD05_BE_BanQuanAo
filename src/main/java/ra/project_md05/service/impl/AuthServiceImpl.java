@@ -67,16 +67,16 @@ public class AuthServiceImpl implements IAuthService {
     public void handleRegister(FormRegister formRegister) {
         Set<Roles> roles = new HashSet<>();
         if (formRegister.getRoles() == null || formRegister.getRoles().isEmpty()) {
-            roles.add(roleService.findByRoleName(RoleName.USER));
+            roles.add(roleService.findByRoleName(RoleName.ROLE_USER));
         }else {
             formRegister.getRoles().forEach(role -> {
                 switch (role) {
                     case "admin":
-                        roles.add(roleService.findByRoleName(RoleName.ADMIN));
+                        roles.add(roleService.findByRoleName(RoleName.ROLE_ADMIN));
                     case "manager":
-                        roles.add(roleService.findByRoleName(RoleName.MANAGER));
+                        roles.add(roleService.findByRoleName(RoleName.ROLE_MANAGER));
                     case "user":
-                        roles.add(roleService.findByRoleName(RoleName.USER));
+                        roles.add(roleService.findByRoleName(RoleName.ROLE_USER));
                     default:
                         throw new RuntimeException("role not found");
                 }
