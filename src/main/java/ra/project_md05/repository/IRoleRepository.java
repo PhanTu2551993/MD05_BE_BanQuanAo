@@ -1,7 +1,7 @@
 package ra.project_md05.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ra.project_md05.constans.RoleName;
+import ra.project_md05.constants.RoleName;
 import ra.project_md05.model.entity.Roles;
 
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ra.project_md05.constans.EHttpStatus;
+import ra.project_md05.constants.EHttpStatus;
 import ra.project_md05.model.dto.request.FormLogin;
 import ra.project_md05.model.dto.request.FormRegister;
 import ra.project_md05.model.dto.response.ResponseWrapper;

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ra.project_md05.constans.EHttpStatus;
+import ra.project_md05.constants.EHttpStatus;
 
 @NoArgsConstructor
 @AllArgsConstructor

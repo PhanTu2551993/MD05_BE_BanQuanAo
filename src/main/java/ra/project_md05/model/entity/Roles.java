@@ -2,7 +2,7 @@ package ra.project_md05.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ra.project_md05.constans.RoleName;
+import ra.project_md05.constants.RoleName;
 
 
 @Entity
