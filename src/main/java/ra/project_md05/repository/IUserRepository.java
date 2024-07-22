@@ -20,5 +20,5 @@ public interface IUserRepository extends JpaRepository<Users, Long>, PagingAndSo
     boolean existsByEmail(String email);
     @Query("select u from Users u where u.fullName like concat('%',:fullName,'%')")
     Page<Users> findUsersByUsernameAndSorting(String fullName, Pageable pageable);
-    List<Users> findByUsernameContainingIgnoreCase(String username);
+    List<Users> findByUsernameContainingOrFullNameContainingOrEmailContainingOrPhoneContaining(String username, String fullName, String email, String phone);
 }

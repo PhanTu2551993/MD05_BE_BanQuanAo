@@ -61,22 +61,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Page<Users> getAllUser(Integer page, Integer itemPage, String orderBy, String direction) {
-        Pageable pageable = null;
-        if(orderBy!=null && !orderBy.isEmpty()){
-            Sort sort = null;
-            switch (direction){
-                case "ASC":
-                    sort = Sort.by(orderBy).ascending();
-                    break;
-                case "DESC":
-                    sort = Sort.by(orderBy).descending();
-                    break;
-            }
-            pageable = PageRequest.of(page, itemPage,sort);
-        }else{
-            pageable = PageRequest.of(page, itemPage);
-        }
+    public Page<Users> getUsers(int page, int size, String sortField, String sortDirection) {
+        Sort sort = Sort.by(sortField);
+        sort = sortDirection.equalsIgnoreCase("asc") ? sort.ascending() : sort.descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
         return userRepository.findAll(pageable);
     }
 
@@ -91,9 +79,9 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Users updateUserStatus(Long userId, Boolean status) {
+    public Users updateUserStatus(Long userId) {
         Users user = getUserById(userId);
-        user.setStatus(status);
+        user.setStatus(!user.getStatus());
         return userRepository.save(user);
     }
 
@@ -144,8 +132,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<Users> findByUsernameContainingIgnoreCase(String username) {
-        return userRepository.findByUsernameContainingIgnoreCase(username);
+    public List<Users> searchUsers(String query) {
+        return userRepository.findByUsernameContainingOrFullNameContainingOrEmailContainingOrPhoneContaining(query, query, query, query);
     }
 
     private boolean isValidPassword(String password) {
