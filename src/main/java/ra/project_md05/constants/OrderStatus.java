@@ -1,4 +1,4 @@
-package ra.project_md05.constans;
+package ra.project_md05.constants;
 
 public enum OrderStatus {
     WAITING,
