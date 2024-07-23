@@ -8,12 +8,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ra.project_md05.constants.RoleName;
 import ra.project_md05.model.dto.request.UpdateUserRequest;
+import ra.project_md05.model.entity.Roles;
 import ra.project_md05.model.entity.Users;
+import ra.project_md05.repository.IRoleRepository;
 import ra.project_md05.repository.IUserRepository;
+import ra.project_md05.service.IRoleService;
 import ra.project_md05.service.IUserService;
 
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,6 +30,11 @@ public class UserServiceImpl implements IUserService {
     IUserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    IRoleRepository roleRepository;
+    @Autowired
+    private IRoleService roleService;
 //    @Autowired
 //    IAddressRepository addressRepository;
 //    @Autowired
@@ -135,6 +145,30 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<Users> searchUsers(String query) {
         return userRepository.findByUsernameContainingOrFullNameContainingOrEmailContainingOrPhoneContaining(query, query, query, query);
+    }
+
+    @Override
+    public Users updateUserRole(Long userId, String newRole) {
+        // Tìm người dùng theo userId
+        Users user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return null; // Người dùng không tồn tại
+        }
+        // Xóa tất cả các vai trò hiện tại của người dùng
+        user.getRoles().clear();
+        // Tìm vai trò mới từ RoleName
+        RoleName roleName;
+        try {
+            roleName = RoleName.valueOf(newRole.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid role: " + newRole);
+        }
+        // Thêm vai trò mới cho người dùng
+        Roles newRoles = roleService.findByRoleName(roleName);
+        user.getRoles().add(newRoles);
+
+        // Cập nhật người dùng trong cơ sở dữ liệu
+        return userRepository.save(user);
     }
 
     private boolean isValidPassword(String password) {

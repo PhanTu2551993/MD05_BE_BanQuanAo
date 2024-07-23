@@ -21,9 +21,7 @@ import ra.project_md05.service.IAuthService;
 import ra.project_md05.service.IRoleService;
 
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,7 +63,7 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public void handleRegister(FormRegister formRegister) {
-        Set<Roles> roles = new HashSet<>();
+        List<Roles> roles = new ArrayList<>();
         if (formRegister.getRoles() == null || formRegister.getRoles().isEmpty()) {
             roles.add(roleService.findByRoleName(RoleName.ROLE_USER));
         }else {
