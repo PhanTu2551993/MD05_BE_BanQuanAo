@@ -61,24 +61,13 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Page<Users> getAllUser(Integer page, Integer itemPage, String orderBy, String direction) {
-        Pageable pageable = null;
-        if(orderBy!=null && !orderBy.isEmpty()){
-            Sort sort = null;
-            switch (direction){
-                case "ASC":
-                    sort = Sort.by(orderBy).ascending();
-                    break;
-                case "DESC":
-                    sort = Sort.by(orderBy).descending();
-                    break;
-            }
-            pageable = PageRequest.of(page, itemPage,sort);
-        }else{
-            pageable = PageRequest.of(page, itemPage);
-        }
+    public Page<Users> getUsers(int page, int size, String sortField, String sortDirection) {
+        Sort sort = Sort.by(sortField);
+        sort = sortDirection.equalsIgnoreCase("asc") ? sort.ascending() : sort.descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
         return userRepository.findAll(pageable);
     }
+
 
     @Override
     public Users getUserById(Long id) {
