@@ -1,4 +1,4 @@
-package ra.project_md05.controller;
+package ra.project_md05.controller.admin;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,11 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ra.project_md05.exception.DataExistException;
+import ra.project_md05.model.dto.PageDTO;
 import ra.project_md05.model.dto.request.CategoryRequest;
 import ra.project_md05.model.dto.request.ProductRequest;
 import ra.project_md05.model.dto.response.ProductResponse;
@@ -25,7 +25,6 @@ import ra.project_md05.service.IRoleService;
 import ra.project_md05.service.IUserService;
 import ra.project_md05.service.ProductService;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,6 +46,7 @@ public class AdminController {
                                       @RequestParam(defaultValue = "2") int size,
                                       @RequestParam(defaultValue = "userId") String sortField,
                                       @RequestParam(defaultValue = "asc") String sortDirection) {
+
         Page<Users> users = userService.getUsers(page, size, sortField, sortDirection);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
@@ -141,4 +141,61 @@ public class AdminController {
         productService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    @GetMapping("/products/search")
+    public ResponseEntity<?> search(
+            @RequestParam(name = "search") String search,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "3") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductResponse> productPage = productService.findByNameOrDescriptionContaining(search, pageable);
+
+        if (productPage.isEmpty()) {
+            return new ResponseEntity<>("Không tìm thấy Sản phẩm có tên: " + search, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(productPage, HttpStatus.OK);
+    }
+
+    // Chuyển đổi đối tượng Product
+    private ResponseEntity<?> getResponseEntity(List<Product> productList) {
+        List<ProductResponse> productResponses = productList.stream()
+                .map(this::convertToProductResponse)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(productResponses, HttpStatus.OK), HttpStatus.OK);
+    }
+
+    private ProductResponse convertToProductResponse(Product product) {
+        return ProductResponse.builder()
+                .id(product.getProductId())
+                .sku(product.getSku())
+                .productName(product.getProductName())
+                .description(product.getDescription())
+                .imageUrl(product.getImage())
+                .categoryId(product.getCategory().getCategoryId())
+                .brandId(product.getBrand().getId())
+                .createdAt(product.getUpdatedAt())
+                .build();
+    }
+
+    // API: Danh sách sản phẩm được bán(có phân trang và sắp xếp)
+    @GetMapping("/products/on-sale")
+    public ResponseEntity<?> getAllProduct(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "2") int size,
+                                           @RequestParam(defaultValue = "productId") String sortBy,
+                                           @RequestParam(defaultValue = "asc") String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        PageDTO<ProductResponse> productResponsePageDTO = productService.getAllProductRolePermitAll(pageable);
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(productResponsePageDTO, HttpStatus.OK), HttpStatus.OK);
+    }
+
+
+    // API: Danh sách Sản phẩm theo Danh Mục
+    @GetMapping("/products/categories/{categoryId}")
+    public ResponseEntity<?> getProductsByCategory(@PathVariable Long categoryId) {
+        List<Product> productList = productService.findByCategory(categoryService.findById(categoryId));
+        return getResponseEntity(productList);
+    }
+
+
 }

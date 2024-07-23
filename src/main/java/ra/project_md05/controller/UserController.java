@@ -7,10 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ra.project_md05.model.dto.request.ChangePasswordRequest;
 import ra.project_md05.model.dto.request.UpdateUserRequest;
+import ra.project_md05.model.dto.response.ProductResponse;
+import ra.project_md05.model.dto.response.ResponseDtoSuccess;
 import ra.project_md05.model.dto.response.UserResponse;
 import ra.project_md05.model.dto.response.converter.UserConverter;
+import ra.project_md05.model.entity.Product;
 import ra.project_md05.model.entity.Users;
 import ra.project_md05.service.IUserService;
+import ra.project_md05.service.ProductService;
 
 
 import java.util.List;
@@ -21,6 +25,8 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private IUserService userService;
+    @Autowired
+    private ProductService productService;
 //    @Autowired
 //    private IAddressService addressService;
 //    @Autowired
@@ -29,6 +35,14 @@ public class UserController {
 //    private IWishListService wishListService;
 //    @Autowired
 //    private IOrderService orderService;
+
+    // API: Danh sách Sản phẩm mới: Lấy ra 10 Sản phẩm được thêm gần đây nhất
+    @GetMapping("/products/new-products")
+    public ResponseEntity<?> getNewProducts() {
+        List<Product> productList = productService.findFirst10ByOrderByCreatedAtDesc();
+        return getResponseEntity(productList);
+    }
+
 
 
     @PutMapping("/account/change-password")
@@ -176,4 +190,25 @@ public class UserController {
 //            return ResponseEntity.badRequest().body("Không thể hủy đơn hàng. Đơn hàng không ở trạng thái chờ xác nhận.");
 //        }
 //    }
+
+
+    // Chuyển đổi đối tượng Product
+    private ResponseEntity<?> getResponseEntity(List<Product> productList) {
+        List<ProductResponse> productResponses = productList.stream()
+                .map(this::convertToProductResponse)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(productResponses, HttpStatus.OK), HttpStatus.OK);
+    }
+
+    private ProductResponse convertToProductResponse(Product product) {
+        return ProductResponse.builder()
+                .id(product.getProductId())
+                .sku(product.getSku())
+                .productName(product.getProductName())
+                .description(product.getDescription())
+                .imageUrl(product.getImage())
+                .categoryId(product.getCategory().getCategoryId())
+                .createdAt(product.getUpdatedAt())
+                .build();
+    }
 }

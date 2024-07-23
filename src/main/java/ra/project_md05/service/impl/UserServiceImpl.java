@@ -78,6 +78,7 @@ public class UserServiceImpl implements IUserService {
         return userRepository.findAll(pageable);
     }
 
+
     @Override
     public Users getUserById(Long id) {
         return userRepository.findById(id).orElseThrow(()->new NoSuchElementException("Không tồn tại người dùng"));

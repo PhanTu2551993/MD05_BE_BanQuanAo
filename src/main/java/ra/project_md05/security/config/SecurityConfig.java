@@ -40,8 +40,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .cors(config -> config.configurationSource(request -> {
+        return http.cors(config -> config.configurationSource(request -> {
                     CorsConfiguration cf = new CorsConfiguration();
                     cf.setAllowedOrigins(List.of("http://localhost:5173/"));
                     cf.setAllowedMethods(List.of("*"));

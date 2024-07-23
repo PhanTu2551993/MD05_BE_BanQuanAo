@@ -29,7 +29,6 @@ public class ProductRequest {
     private Long categoryId;
     @NotNull(message = "brandId can be not empty")
     private Long brandId;
-    private Set<MultipartFile> imageSet;
     private Boolean status = true;
     private Date CreatedAt = new Date();
 }
