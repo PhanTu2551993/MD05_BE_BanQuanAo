@@ -17,4 +17,5 @@ public interface IUserService {
     Users updateUser(UpdateUserRequest updateUserRequest);
     Users getCurrentLoggedInUser();
     List<Users> searchUsers(String query);
+    Users updateUserRole(Long userId, String newRole);
 }

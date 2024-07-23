@@ -27,6 +27,7 @@ import ra.project_md05.service.ProductService;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -57,14 +58,21 @@ public class AdminController {
 
     }
 
+    @PutMapping("/{userId}/role")
+    public ResponseEntity<Users> updateUserRole(@PathVariable Long userId, @RequestBody Map<String, String> roleRequest) {
+        String newRole = roleRequest.get("role");
+        Users updatedUser = userService.updateUserRole(userId, newRole);
+        return ResponseEntity.ok(updatedUser);
+    }
+
     //search user theo tên
     @GetMapping("/users/search")
-    public ResponseEntity<?> getUsersByName(@RequestParam("name") String query) {
+    public ResponseEntity<?> getUsersByName(@RequestParam String query) {
         return new ResponseEntity<>(userService.searchUsers(query), HttpStatus.OK);
     }
 
     //khoa mo tai khoan nguoi dung
-    @PutMapping("/users/{userId}")
+    @PatchMapping("/users/{userId}")
     public ResponseEntity<UserResponse> changeUserStatus(@PathVariable Long userId) {
         Users changeUserStatus = userService.updateUserStatus(userId);
         return new ResponseEntity<>(UserConverter.toUserResponse(changeUserStatus), HttpStatus.OK);
