@@ -22,7 +22,6 @@ public class Product {
     private Long productId;
 
     @Column(name = "sku", nullable = false, unique = true, length = 100)
-    @UUID
     private String sku;
 
     @Column(name = "product_name", nullable = false, unique = true, length = 100)

@@ -2,13 +2,12 @@ package ra.project_md05.service.impl;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import ra.project_md05.model.dto.PageDTO;
 import ra.project_md05.model.dto.request.ProductRequest;
 import ra.project_md05.model.dto.response.ProductResponse;
+import ra.project_md05.model.entity.Category;
 import ra.project_md05.model.entity.Product;
 import ra.project_md05.repository.BrandRepository;
 import ra.project_md05.repository.CategoryRepository;
@@ -16,7 +15,9 @@ import ra.project_md05.repository.ProductRepository;
 import ra.project_md05.service.ProductService;
 import ra.project_md05.service.UploadService;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -71,6 +72,48 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Product not found with id " + id));
         productRepository.delete(product);
+    }
+
+    @Override
+    public Page<ProductResponse> findByNameOrDescriptionContaining(String search, Pageable pageable) {
+        Page<Product> products = productRepository.findByProductNameContainingOrDescriptionContaining(search, search, pageable);
+        return products.map(this::convertToResponse);
+    }
+
+    @Override
+    public List<Product> findFirst10ByOrderByCreatedAtDesc() {
+        return productRepository.findFirst10ByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public List<Product> findByCategory(Category category) {
+        return productRepository.findByCategory(category);
+    }
+
+    @Override
+    public Page<Product> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+
+    @Override
+    public PageDTO<ProductResponse> getAllProductRolePermitAll(Pageable pageable) {
+        Page<Product> productPage = findAll(pageable);
+        List<ProductResponse> productResponseList = new ArrayList<>();
+        for (Product product : productPage) {
+            ProductResponse productResponse = ProductResponse.builder()
+                    .id(product.getProductId())
+                    .sku(product.getSku())
+                    .productName(product.getProductName())
+                    .categoryId(product.getCategory().getCategoryId())
+                    .createdAt(product.getCreatedAt())
+                    .imageUrl(product.getImage())
+                    .description(product.getDescription())
+                    .build();
+
+            productResponseList.add(productResponse);
+        }
+        return new PageDTO<>(new PageImpl<>(productResponseList, pageable, productPage.getTotalElements()));
     }
 
     private ProductResponse convertToResponse(Product product) {
