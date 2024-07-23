@@ -1,5 +1,6 @@
 package ra.project_md05.controller.admin;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,10 +47,10 @@ public class AdminController {
                                       @RequestParam(defaultValue = "asc") String sortDirection) {
 
         Page<Users> users = userService.getUsers(page, size, sortField, sortDirection);
-        return new ResponseEntity<>(users.getContent(), HttpStatus.OK);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    //lay ve danh sach cac quyen
+    //lay ve danh sach cac quyen-
     @GetMapping("/roles")
     public ResponseEntity<?> getAllRoles() {
         return new ResponseEntity<>(roleService.getAllRoles(), HttpStatus.OK);
@@ -58,14 +59,14 @@ public class AdminController {
 
     //search user theo tên
     @GetMapping("/users/search")
-    public ResponseEntity<?> getUsersByName(@RequestParam("name") String name) {
-        return new ResponseEntity<>(userService.findByUsernameContainingIgnoreCase(name), HttpStatus.OK);
+    public ResponseEntity<?> getUsersByName(@RequestParam("name") String query) {
+        return new ResponseEntity<>(userService.searchUsers(query), HttpStatus.OK);
     }
 
     //khoa mo tai khoan nguoi dung
     @PutMapping("/users/{userId}")
-    public ResponseEntity<UserResponse> changeUserStatus(@PathVariable Long userId, @RequestParam Boolean status) {
-        Users changeUserStatus = userService.updateUserStatus(userId, status);
+    public ResponseEntity<UserResponse> changeUserStatus(@PathVariable Long userId) {
+        Users changeUserStatus = userService.updateUserStatus(userId);
         return new ResponseEntity<>(UserConverter.toUserResponse(changeUserStatus), HttpStatus.OK);
     }
 

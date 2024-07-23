@@ -80,9 +80,9 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Users updateUserStatus(Long userId, Boolean status) {
+    public Users updateUserStatus(Long userId) {
         Users user = getUserById(userId);
-        user.setStatus(status);
+        user.setStatus(!user.getStatus());
         return userRepository.save(user);
     }
 
@@ -133,8 +133,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<Users> findByUsernameContainingIgnoreCase(String username) {
-        return userRepository.findByUsernameContainingIgnoreCase(username);
+    public List<Users> searchUsers(String query) {
+        return userRepository.findByUsernameContainingOrFullNameContainingOrEmailContainingOrPhoneContaining(query, query, query, query);
     }
 
     private boolean isValidPassword(String password) {
