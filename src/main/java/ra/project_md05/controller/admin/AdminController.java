@@ -169,17 +169,7 @@ public class AdminController {
                 .build();
     }
 
-    // API: Danh sách sản phẩm được bán(có phân trang và sắp xếp)
-    @GetMapping("/products/on-sale")
-    public ResponseEntity<?> getAllProduct(@RequestParam(defaultValue = "0") int page,
-                                           @RequestParam(defaultValue = "2") int size,
-                                           @RequestParam(defaultValue = "productId") String sortBy,
-                                           @RequestParam(defaultValue = "asc") String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        PageDTO<ProductResponse> productResponsePageDTO = productService.getAllProductRolePermitAll(pageable);
-        return new ResponseEntity<>(new ResponseDtoSuccess<>(productResponsePageDTO, HttpStatus.OK), HttpStatus.OK);
-    }
+
 
 
     // API: Danh sách Sản phẩm theo Danh Mục
@@ -188,6 +178,4 @@ public class AdminController {
         List<Product> productList = productService.findByCategory(categoryService.findById(categoryId));
         return getResponseEntity(productList);
     }
-
-
 }

@@ -60,7 +60,7 @@ public class SecurityConfig {
                         url -> url
                                 .requestMatchers("/api/v1/admin/**").hasAnyAuthority(RoleName.ROLE_ADMIN.name())
                                 .requestMatchers("/api/v1/manager/**").hasAnyAuthority(RoleName.ROLE_MANAGER.name())
-                                .requestMatchers("/api/v1/user/**").hasAnyAuthority(RoleName.ROLE_USER.name())
+//                                .requestMatchers("/api/v1/user/**").hasAnyAuthority(RoleName.ROLE_USER.name())
                                 .anyRequest().permitAll()//còn lại không cần xác thực
                 )
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -2,17 +2,24 @@ package ra.project_md05.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ra.project_md05.model.dto.PageDTO;
 import ra.project_md05.model.dto.request.ChangePasswordRequest;
 import ra.project_md05.model.dto.request.UpdateUserRequest;
 import ra.project_md05.model.dto.response.ProductResponse;
 import ra.project_md05.model.dto.response.ResponseDtoSuccess;
 import ra.project_md05.model.dto.response.UserResponse;
 import ra.project_md05.model.dto.response.converter.UserConverter;
+import ra.project_md05.model.entity.Category;
 import ra.project_md05.model.entity.Product;
 import ra.project_md05.model.entity.Users;
+import ra.project_md05.service.CategoryService;
 import ra.project_md05.service.IUserService;
 import ra.project_md05.service.ProductService;
 
@@ -27,6 +34,8 @@ public class UserController {
     private IUserService userService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private CategoryService categoryService;
 //    @Autowired
 //    private IAddressService addressService;
 //    @Autowired
@@ -41,6 +50,36 @@ public class UserController {
     public ResponseEntity<?> getNewProducts() {
         List<Product> productList = productService.findFirst10ByOrderByCreatedAtDesc();
         return getResponseEntity(productList);
+    }
+
+    //API hien thi tat ca san pham
+    @GetMapping("/products")
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "2") int size,
+            @RequestParam(defaultValue = "productId") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        Page<ProductResponse> products = productService.getAllProducts(page, size, sortBy, sortDir);
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
+    // API: Danh sách Sản phẩm theo Danh Mục
+    @GetMapping("/products/categories/{categoryId}")
+    public ResponseEntity<?> getProductsByCategory(@PathVariable Long categoryId) {
+        List<Product> productList = productService.findByCategory(categoryService.findById(categoryId));
+        return getResponseEntity(productList);
+    }
+
+    // API: Lấy về danh sách tất cả danh mục (sắp xếp và phân trang)
+    @GetMapping("/categories")
+    public ResponseEntity<?> getAllCategory(@RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "2") int size,
+                                            @RequestParam(defaultValue = "categoryId") String sortBy,
+                                            @RequestParam(defaultValue = "asc") String sortDir) {
+        Sort.Direction direction = sortDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Page<Category> categoryPage = categoryService.findAll(pageable);
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(categoryPage, HttpStatus.OK), HttpStatus.OK);
     }
 
 

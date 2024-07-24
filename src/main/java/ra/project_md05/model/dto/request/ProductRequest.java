@@ -6,11 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UUID;
 import org.springframework.web.multipart.MultipartFile;
-
+import ra.project_md05.model.entity.Product;
+import ra.project_md05.validation.NameExist;
 import java.util.Date;
-import java.util.Set;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,11 +18,10 @@ import java.util.Set;
 @Getter
 public class ProductRequest {
     @NotEmpty(message = "productName can be not empty")
+    @NameExist(entityClass = Product.class, existName = "productName", message = "Product already exists")
     private String productName;
     @NotEmpty( message = "sku can be not empty")
-    @UUID
-    private String sku;
-
+    private String sku = UUID.randomUUID().toString();
     private String description;
     private MultipartFile image;
     @NotNull(message = "categoryId can be not empty")
