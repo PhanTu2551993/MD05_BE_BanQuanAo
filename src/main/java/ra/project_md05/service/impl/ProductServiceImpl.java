@@ -107,6 +107,7 @@ public class ProductServiceImpl implements ProductService {
                     .productName(product.getProductName())
                     .categoryId(product.getCategory().getCategoryId())
                     .createdAt(product.getCreatedAt())
+                    .brandId(product.getBrand().getId())
                     .imageUrl(product.getImage())
                     .description(product.getDescription())
                     .build();

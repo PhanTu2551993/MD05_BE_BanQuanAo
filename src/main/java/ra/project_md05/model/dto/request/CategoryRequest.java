@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
+import ra.project_md05.model.entity.Category;
+import ra.project_md05.validation.NameExist;
 
 import java.util.Date;
 
@@ -15,6 +17,7 @@ import java.util.Date;
 @Setter
 public class CategoryRequest {
     @NotEmpty(message = "CategoryName can be not empty")
+    @NameExist(entityClass = Category.class, existName = "categoryName", message = "Category already exists")
     private String categoryName;
     private String description;
     private MultipartFile image;
