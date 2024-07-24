@@ -57,7 +57,7 @@ public class AdminController {
         return new ResponseEntity<>(roleService.getAllRoles(), HttpStatus.OK);
 
     }
-
+    // phân quyền ngươ dùng
     @PutMapping("/{userId}/role")
     public ResponseEntity<Users> updateUserRole(@PathVariable Long userId, @RequestBody Map<String, String> roleRequest) {
         String newRole = roleRequest.get("role");
