@@ -16,6 +16,7 @@ import ra.project_md05.repository.IRoleRepository;
 import ra.project_md05.repository.IUserRepository;
 import ra.project_md05.service.IRoleService;
 import ra.project_md05.service.IUserService;
+import ra.project_md05.service.UploadService;
 
 
 import java.util.Collections;
@@ -35,6 +36,9 @@ public class UserServiceImpl implements IUserService {
     IRoleRepository roleRepository;
     @Autowired
     private IRoleService roleService;
+    @Autowired
+    private UploadService uploadService;
+
 //    @Autowired
 //    IAddressRepository addressRepository;
 //    @Autowired
@@ -129,8 +133,19 @@ public class UserServiceImpl implements IUserService {
         if (updateUserRequest.getAddress() != null) {
             updateUser.setAddress(updateUserRequest.getAddress());
         }
+        updateUser.setUpdatedAt(new Date());
+        return userRepository.save(updateUser);
+    }
+
+    @Override
+    public Users updateAvatarUser(UpdateUserRequest updateUserRequest) {
+        String imageUrl = null;
+        if (updateUserRequest.getAvatar() != null && !updateUserRequest.getAvatar().isEmpty()){
+            imageUrl = uploadService.uploadFileToServer(updateUserRequest.getAvatar());
+        }
+        Users updateUser = getCurrentLoggedInUser();
         if (updateUserRequest.getAvatar() != null) {
-            updateUser.setAvatar(updateUserRequest.getAvatar());
+            updateUser.setAvatar(imageUrl);
         }
         updateUser.setUpdatedAt(new Date());
         return userRepository.save(updateUser);

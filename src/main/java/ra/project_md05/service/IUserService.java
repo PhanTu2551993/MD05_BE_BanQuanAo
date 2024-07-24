@@ -15,6 +15,7 @@ public interface IUserService {
     Users updateUserStatus(Long userId);
     boolean changePassword(String oldPass, String newPass, String confirmNewPass);
     Users updateUser(UpdateUserRequest updateUserRequest);
+    Users updateAvatarUser(UpdateUserRequest updateUserRequest);
     Users getCurrentLoggedInUser();
     List<Users> searchUsers(String query);
     Users updateUserRole(Long userId, String newRole);

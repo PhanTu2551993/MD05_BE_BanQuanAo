@@ -55,9 +55,16 @@ public class UserController {
         }
     }
 
-    @PutMapping("/account")
-    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest updateUserRequest) {
+    @PatchMapping("/account")
+    public ResponseEntity<UserResponse> updateUser(@Valid @ModelAttribute UpdateUserRequest updateUserRequest) {
         Users updatedUser = userService.updateUser(updateUserRequest);
+        UserResponse userResponses = UserConverter.toUserResponse(updatedUser);
+        return ResponseEntity.ok(userResponses);
+    }
+
+    @PatchMapping("/avatar")
+    public ResponseEntity<UserResponse> updateAvatarUser(@Valid @ModelAttribute UpdateUserRequest updateUserRequest) {
+        Users updatedUser = userService.updateAvatarUser(updateUserRequest);
         UserResponse userResponses = UserConverter.toUserResponse(updatedUser);
         return ResponseEntity.ok(userResponses);
     }
