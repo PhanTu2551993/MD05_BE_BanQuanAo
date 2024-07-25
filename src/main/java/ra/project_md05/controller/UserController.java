@@ -154,10 +154,25 @@ public class UserController {
                         cart.getProduct().getImage(),
                         cart.getProduct().getPrice(),
                         cart.getOrderQuantity()
+
                 )
         ).collect(Collectors.toList());
 
         return new ResponseEntity<>(new ResponseDtoSuccess<>(cartResponses, HttpStatus.OK), HttpStatus.OK);
+    }
+
+    // xoa 1 sp
+    @DeleteMapping("/cart/items/{cartItemId}")
+    public ResponseEntity<?> getCartItem(@AuthenticationPrincipal UserDetailCustom customUserDetail, @PathVariable Long cartItemId) {
+        shoppingCartService.deleteShoppingCart(customUserDetail.getUserId(), shoppingCartService.findById(cartItemId).getProduct().getProductId());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // xoa tat ca sp
+    @DeleteMapping("/cart/clear")
+    public ResponseEntity<?> clearCart(@AuthenticationPrincipal UserDetailCustom customUserDetail) {
+        shoppingCartService.deleteShoppingCart(customUserDetail.getUserId());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 //    @PostMapping("/account/addresses")
@@ -300,6 +315,8 @@ public class UserController {
                 .imageUrl(product.getImage())
                 .categoryId(product.getCategory().getCategoryId())
                 .createdAt(product.getUpdatedAt())
+                .stock(product.getStock())
+                .price(product.getPrice())
                 .build();
     }
 }
