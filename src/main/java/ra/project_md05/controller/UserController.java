@@ -8,23 +8,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ra.project_md05.model.dto.PageDTO;
 import ra.project_md05.model.dto.request.ChangePasswordRequest;
+import ra.project_md05.model.dto.request.FormAddToCartRequest;
+import ra.project_md05.model.dto.request.ProductDetailRequest;
 import ra.project_md05.model.dto.request.UpdateUserRequest;
 import ra.project_md05.model.dto.response.ProductResponse;
 import ra.project_md05.model.dto.response.ResponseDtoSuccess;
+import ra.project_md05.model.dto.response.ShoppingCartResponse;
 import ra.project_md05.model.dto.response.UserResponse;
 import ra.project_md05.model.dto.response.converter.UserConverter;
-import ra.project_md05.model.entity.Category;
-import ra.project_md05.model.entity.Product;
-import ra.project_md05.model.entity.Users;
+import ra.project_md05.model.entity.*;
+import ra.project_md05.security.principal.UserDetailCustom;
 import ra.project_md05.service.CategoryService;
 import ra.project_md05.service.IUserService;
 import ra.project_md05.service.ProductService;
+import ra.project_md05.service.ShoppingCartService;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -38,8 +44,8 @@ public class UserController {
     private CategoryService categoryService;
 //    @Autowired
 //    private IAddressService addressService;
-//    @Autowired
-//    private IShoppingCartService shoppingCartService;
+    @Autowired
+    private ShoppingCartService shoppingCartService;
 //    @Autowired
 //    private IWishListService wishListService;
 //    @Autowired
@@ -113,6 +119,45 @@ public class UserController {
         Users infoUser = userService.getCurrentLoggedInUser();
         UserResponse userResponses = UserConverter.toUserResponse(infoUser);
         return ResponseEntity.ok(userResponses);
+    }
+
+    //hien thi san pham trong gio hang
+    @GetMapping("/cart/list")
+    public ResponseEntity<?> getCartList(@AuthenticationPrincipal UserDetailCustom userDetail) {
+        Users user = userService.getCurrentLoggedInUser();
+        List<ShoppingCart> cartList = shoppingCartService.findByUser(user);
+        List<ShoppingCartResponse> cartResponses = cartList.stream().map(cart ->
+                new ShoppingCartResponse(
+                        cart.getProduct().getProductId(),
+                        cart.getProduct().getProductName(),
+                        cart.getProduct().getImage(),
+                        cart.getProduct().getPrice(),
+                        cart.getOrderQuantity()
+                )
+        ).collect(Collectors.toList());
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(cartResponses, HttpStatus.OK), HttpStatus.OK);
+
+    }
+
+
+    //them san pham vao gio hang
+    @PostMapping("/cart/add")
+    public ResponseEntity<?> addToCart(@AuthenticationPrincipal UserDetailCustom userDetails, @RequestBody FormAddToCartRequest formAddToCartRequest) {
+        shoppingCartService.saveShoppingCart(userDetails.getUserId(), formAddToCartRequest.getProductId());
+        Users user = userService.getUserById(userDetails.getUserId());
+        List<ShoppingCart> shoppingCartList = shoppingCartService.findByUser(user);
+
+        List<ShoppingCartResponse> cartResponses = shoppingCartList.stream().map(cart ->
+                new ShoppingCartResponse(
+                        cart.getProduct().getProductId(),
+                        cart.getProduct().getProductName(),
+                        cart.getProduct().getImage(),
+                        cart.getProduct().getPrice(),
+                        cart.getOrderQuantity()
+                )
+        ).collect(Collectors.toList());
+
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(cartResponses, HttpStatus.OK), HttpStatus.OK);
     }
 
 //    @PostMapping("/account/addresses")
