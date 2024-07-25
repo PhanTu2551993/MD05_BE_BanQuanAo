@@ -1,22 +1,15 @@
-package ra.project_md05.model.entity;
+package ra.project_md05.model.dto.request;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
 
-@Entity
-@Table(name = "coupons")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class Coupons {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupons_id")
-    private Long couponsId;
+public class CouponsRequest {
 
     private String code;
     private String discount;
