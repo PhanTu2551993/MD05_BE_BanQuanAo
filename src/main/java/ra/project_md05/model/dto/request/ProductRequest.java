@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ra.project_md05.model.entity.Product;
 import ra.project_md05.validation.NameExist;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -28,6 +29,8 @@ public class ProductRequest {
     private Long categoryId;
     @NotNull(message = "brandId can be not empty")
     private Long brandId;
+    private Integer stock;
+    private Double price;
     private Boolean status = true;
     private Date CreatedAt = new Date();
 }

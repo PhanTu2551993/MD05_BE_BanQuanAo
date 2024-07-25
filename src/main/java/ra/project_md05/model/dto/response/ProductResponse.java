@@ -1,7 +1,6 @@
 package ra.project_md05.model.dto.response;
 
 import lombok.*;
-
 import java.util.Date;
 
 @NoArgsConstructor
@@ -17,6 +16,8 @@ public class ProductResponse {
     private String imageUrl;
     private Long categoryId;
     private Long brandId;
-    private boolean status;
+    private Integer stock;
+    private Double price;
+    private Boolean status;
     private Date createdAt;
 }

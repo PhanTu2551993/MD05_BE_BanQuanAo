@@ -12,13 +12,16 @@ import org.springframework.web.bind.annotation.*;
 import ra.project_md05.exception.DataExistException;
 import ra.project_md05.model.dto.PageDTO;
 import ra.project_md05.model.dto.request.CategoryRequest;
+import ra.project_md05.model.dto.request.ProductDetailRequest;
 import ra.project_md05.model.dto.request.ProductRequest;
+import ra.project_md05.model.dto.response.ProductDetailResponse;
 import ra.project_md05.model.dto.response.ProductResponse;
 import ra.project_md05.model.dto.response.ResponseDtoSuccess;
 import ra.project_md05.model.dto.response.UserResponse;
 import ra.project_md05.model.dto.response.converter.UserConverter;
 import ra.project_md05.model.entity.Category;
 import ra.project_md05.model.entity.Product;
+import ra.project_md05.model.entity.ProductDetail;
 import ra.project_md05.model.entity.Users;
 import ra.project_md05.service.CategoryService;
 import ra.project_md05.service.IRoleService;
@@ -171,6 +174,8 @@ public class AdminController {
                 .productName(product.getProductName())
                 .description(product.getDescription())
                 .imageUrl(product.getImage())
+                .price(product.getPrice())
+                .stock(product.getStock())
                 .categoryId(product.getCategory().getCategoryId())
                 .brandId(product.getBrand().getId())
                 .createdAt(product.getUpdatedAt())
@@ -186,4 +191,6 @@ public class AdminController {
         List<Product> productList = productService.findByCategory(categoryService.findById(categoryId));
         return getResponseEntity(productList);
     }
+
+
 }

@@ -7,6 +7,7 @@ import ra.project_md05.model.dto.request.ProductRequest;
 import ra.project_md05.model.dto.response.ProductResponse;
 import ra.project_md05.model.entity.Category;
 import ra.project_md05.model.entity.Product;
+import ra.project_md05.model.entity.ProductDetail;
 
 import java.util.List;
 
@@ -28,4 +29,8 @@ public interface ProductService {
     Page<Product> findAll(Pageable pageable);
 
     PageDTO<ProductResponse> getAllProductRolePermitAll(Pageable pageable);
+
+    Product getProductById(Long productId);
+     List<Product> getAllProducts();
+
 }
