@@ -9,8 +9,10 @@ import ra.project_md05.model.dto.request.ProductRequest;
 import ra.project_md05.model.dto.response.ProductResponse;
 import ra.project_md05.model.entity.Category;
 import ra.project_md05.model.entity.Product;
+import ra.project_md05.model.entity.ProductDetail;
 import ra.project_md05.repository.BrandRepository;
 import ra.project_md05.repository.CategoryRepository;
+import ra.project_md05.repository.ProductDetailRepository;
 import ra.project_md05.repository.ProductRepository;
 import ra.project_md05.service.ProductService;
 import ra.project_md05.service.UploadService;
@@ -33,6 +35,8 @@ public class ProductServiceImpl implements ProductService {
     private BrandRepository brandRepository;
     @Autowired
     private UploadService uploadService;
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
 
     @Override
     public Page<ProductResponse> getAllProducts(int page, int size, String sortBy, String sortDir) {
@@ -60,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
         product.setCategory(categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(() -> new NoSuchElementException("Category not found with id " + productRequest.getCategoryId())));
         product.setBrand(brandRepository.findById(productRequest.getBrandId())
                 .orElseThrow(() -> new NoSuchElementException("Brand not found with id " + productRequest.getBrandId())));
-        product.setStatus(productRequest.getStatus());
+        product.setStatus(true);
         product.setCreatedAt(productRequest.getCreatedAt());
         product.setUpdatedAt(new Date());
         Product updatedProduct = productRepository.save(product);
@@ -117,6 +121,15 @@ public class ProductServiceImpl implements ProductService {
         return new PageDTO<>(new PageImpl<>(productResponseList, pageable, productPage.getTotalElements()));
     }
 
+    @Override
+    public Product getProductById(Long productId) {
+        return productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+    @Override
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
     private ProductResponse convertToResponse(Product product) {
         ProductResponse productResponse = new ProductResponse();
         productResponse.setId(product.getProductId());
@@ -128,6 +141,8 @@ public class ProductServiceImpl implements ProductService {
         productResponse.setBrandId(product.getBrand().getId());
         productResponse.setStatus(product.getStatus());
         productResponse.setCreatedAt(product.getCreatedAt());
+        productResponse.setStock(product.getStock());
+        productResponse.setPrice(product.getPrice());
         return productResponse;
     }
 
@@ -144,6 +159,8 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(productRequest.getStatus());
         product.setCreatedAt(productRequest.getCreatedAt());
         product.setUpdatedAt(new Date());
+        product.setStock(productRequest.getStock());
+        product.setPrice(productRequest.getPrice());
         return product;
     }
 

@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UUID;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -34,6 +34,8 @@ public class Product {
     private String image;
 
     private Boolean status;
+    private Integer stock;
+    private Double price;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -48,4 +50,5 @@ public class Product {
 
     @Column(name = "updated_at")
     private Date updatedAt;
+
 }
