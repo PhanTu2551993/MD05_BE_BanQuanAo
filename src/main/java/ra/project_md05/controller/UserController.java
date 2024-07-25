@@ -9,17 +9,20 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ra.project_md05.model.dto.PageDTO;
+import ra.project_md05.exception.CustomException;
+import ra.project_md05.model.dto.request.AddressRequest;
 import ra.project_md05.model.dto.request.ChangePasswordRequest;
 import ra.project_md05.model.dto.request.UpdateUserRequest;
 import ra.project_md05.model.dto.response.ProductResponse;
 import ra.project_md05.model.dto.response.ResponseDtoSuccess;
 import ra.project_md05.model.dto.response.UserResponse;
 import ra.project_md05.model.dto.response.converter.UserConverter;
+import ra.project_md05.model.entity.Address;
 import ra.project_md05.model.entity.Category;
 import ra.project_md05.model.entity.Product;
 import ra.project_md05.model.entity.Users;
 import ra.project_md05.service.CategoryService;
+import ra.project_md05.service.IAddressService;
 import ra.project_md05.service.IUserService;
 import ra.project_md05.service.ProductService;
 
@@ -36,8 +39,8 @@ public class UserController {
     private ProductService productService;
     @Autowired
     private CategoryService categoryService;
-//    @Autowired
-//    private IAddressService addressService;
+    @Autowired
+    private IAddressService addressService;
 //    @Autowired
 //    private IShoppingCartService shoppingCartService;
 //    @Autowired
@@ -85,7 +88,7 @@ public class UserController {
 
 
     @PutMapping("/account/change-password")
-    public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+    public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) throws CustomException {
         boolean result = userService.changePassword(changePasswordRequest.getOldPass(), changePasswordRequest.getNewPass(), changePasswordRequest.getConfirmNewPass());
         if (result) {
             return ResponseEntity.ok("Đổi mật khẩu thành công !!");
@@ -95,14 +98,14 @@ public class UserController {
     }
 
     @PatchMapping("/account")
-    public ResponseEntity<UserResponse> updateUser(@Valid @ModelAttribute UpdateUserRequest updateUserRequest) {
+    public ResponseEntity<UserResponse> updateUser( @ModelAttribute UpdateUserRequest updateUserRequest) {
         Users updatedUser = userService.updateUser(updateUserRequest);
         UserResponse userResponses = UserConverter.toUserResponse(updatedUser);
         return ResponseEntity.ok(userResponses);
     }
 
     @PatchMapping("/avatar")
-    public ResponseEntity<UserResponse> updateAvatarUser(@Valid @ModelAttribute UpdateUserRequest updateUserRequest) {
+    public ResponseEntity<UserResponse> updateAvatarUser( @ModelAttribute UpdateUserRequest updateUserRequest) {
         Users updatedUser = userService.updateAvatarUser(updateUserRequest);
         UserResponse userResponses = UserConverter.toUserResponse(updatedUser);
         return ResponseEntity.ok(userResponses);
@@ -115,19 +118,18 @@ public class UserController {
         return ResponseEntity.ok(userResponses);
     }
 
-//    @PostMapping("/account/addresses")
-//    public ResponseEntity<AddressResponse> addNewAddress(@Valid @RequestBody AddressRequest addressRequest) {
-//        Address newAddress = addressService.addNewAddress(addressRequest);
-//        AddressResponse addressResponse = AddressConverter.toAddressResponse(newAddress);
-//        return new ResponseEntity<>(addressResponse, HttpStatus.OK);
-//    }
+    @PostMapping("/account/addresses")
+    public ResponseEntity<Address> addAddress(@Valid @RequestBody AddressRequest addressRequest) {
+        Address newAddress = addressService.addNewAddress(addressRequest);
+        return new ResponseEntity<>(newAddress, HttpStatus.OK);
+    }
 //
-//    @GetMapping("/account/addresses")
-//    public ResponseEntity<List<AddressResponse>> getUserAddresses() {
-//        List<AddressResponse> addresses = addressService.getUserAddresses();
-//        return ResponseEntity.ok(addresses);
-//
-//    }
+    @GetMapping("/account/addresses")
+    public ResponseEntity<List<Address>> getUserAddresses() {
+        List<Address> addresses = addressService.getUserAddresses();
+        return ResponseEntity.ok(addresses);
+
+    }
 //
 //    @GetMapping("/account/addresses/{addressId}")
 //    public ResponseEntity<AddressResponse> getAddressByAddressId(@PathVariable Long addressId) {
@@ -135,11 +137,11 @@ public class UserController {
 //        return ResponseEntity.ok(addressResponse);
 //    }
 //
-//    @DeleteMapping("/account/addresses/{addressId}")
-//    public ResponseEntity<?> deleteAddressById(@PathVariable Long addressId) {
-//        addressService.deleteAddressById(addressId);
-//        return ResponseEntity.ok().body("đã xóa thành công địa chỉ có ID : " + addressId);
-//    }
+    @DeleteMapping("/account/addresses/{addressId}")
+    public ResponseEntity<?> deleteAddressById(@PathVariable Long addressId) {
+        addressService.deleteAddressById(addressId);
+        return ResponseEntity.ok().body("đã xóa thành công địa chỉ có ID : " + addressId);
+    }
 //
 //    @PostMapping("/cart/add")
 //    public ResponseEntity<ShoppingCartResponse> addToCart(@RequestBody AddToCartRequest addToCartRequest) {
