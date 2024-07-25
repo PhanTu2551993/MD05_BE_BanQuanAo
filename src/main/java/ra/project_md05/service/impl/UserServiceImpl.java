@@ -5,10 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ra.project_md05.constants.RoleName;
+import ra.project_md05.exception.CustomException;
 import ra.project_md05.model.dto.request.UpdateUserRequest;
 import ra.project_md05.model.entity.Roles;
 import ra.project_md05.model.entity.Users;
@@ -101,14 +103,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public boolean changePassword(String oldPass, String newPass, String confirmNewPass) {
+    public boolean changePassword(String oldPass, String newPass, String confirmNewPass) throws CustomException {
         Users currentUser = getCurrentLoggedInUser();
 
         if (!passwordEncoder.matches(oldPass, currentUser.getPassword())) {
-            throw new IllegalArgumentException("Mật khẩu cũ không đúng !");
+            throw new CustomException("Mật khẩu cũ không đúng !",HttpStatus.BAD_REQUEST);
         }
         if (!newPass.equals(confirmNewPass)) {
-            throw new IllegalArgumentException("Nhập lại mật khẩu không chính xác !");
+            throw new CustomException("Nhập lại mật khẩu không đúng !",HttpStatus.BAD_REQUEST);
         }
 
         currentUser.setPassword(passwordEncoder.encode(newPass));

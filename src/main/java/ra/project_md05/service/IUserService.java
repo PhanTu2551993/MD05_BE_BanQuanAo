@@ -1,6 +1,7 @@
 package ra.project_md05.service;
 
 import org.springframework.data.domain.Page;
+import ra.project_md05.exception.CustomException;
 import ra.project_md05.model.dto.request.UpdateUserRequest;
 import ra.project_md05.model.entity.Users;
 
@@ -13,7 +14,7 @@ public interface IUserService {
     Users getUserById(Long id);
     Users getUserByUserName(String username);
     Users updateUserStatus(Long userId);
-    boolean changePassword(String oldPass, String newPass, String confirmNewPass);
+    boolean changePassword(String oldPass, String newPass, String confirmNewPass) throws CustomException;
     Users updateUser(UpdateUserRequest updateUserRequest);
     Users updateAvatarUser(UpdateUserRequest updateUserRequest);
     Users getCurrentLoggedInUser();
