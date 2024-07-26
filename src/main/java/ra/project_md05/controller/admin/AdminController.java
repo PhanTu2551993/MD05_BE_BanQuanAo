@@ -12,21 +12,16 @@ import org.springframework.web.bind.annotation.*;
 import ra.project_md05.exception.DataExistException;
 import ra.project_md05.model.dto.PageDTO;
 import ra.project_md05.model.dto.request.CategoryRequest;
+import ra.project_md05.model.dto.request.FormChangeOrderStatus;
 import ra.project_md05.model.dto.request.ProductDetailRequest;
 import ra.project_md05.model.dto.request.ProductRequest;
-import ra.project_md05.model.dto.response.ProductDetailResponse;
-import ra.project_md05.model.dto.response.ProductResponse;
-import ra.project_md05.model.dto.response.ResponseDtoSuccess;
-import ra.project_md05.model.dto.response.UserResponse;
+import ra.project_md05.model.dto.response.*;
 import ra.project_md05.model.dto.response.converter.UserConverter;
 import ra.project_md05.model.entity.Category;
 import ra.project_md05.model.entity.Product;
 import ra.project_md05.model.entity.ProductDetail;
 import ra.project_md05.model.entity.Users;
-import ra.project_md05.service.CategoryService;
-import ra.project_md05.service.IRoleService;
-import ra.project_md05.service.IUserService;
-import ra.project_md05.service.ProductService;
+import ra.project_md05.service.*;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +38,8 @@ public class AdminController {
     private CategoryService categoryService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping("/users")
     public ResponseEntity<?> getUsers(@RequestParam(defaultValue = "0") int page,
@@ -191,6 +188,22 @@ public class AdminController {
     public ResponseEntity<?> getProductsByCategory(@PathVariable Long categoryId) {
         List<Product> productList = productService.findByCategory(categoryService.findById(categoryId));
         return getResponseEntity(productList);
+    }
+    // API: Danh sách tất cả đơn hàng: - /api.myservice.com/v1/admin/orders
+    @GetMapping("/orders")
+    public ResponseEntity<?> getAllOrder(Pageable pageable) {
+        Page<OrderResponseRoleAdmin> orderPage = orderService.getAllOrderRoleAdmin(pageable);
+        List<OrderResponseRoleAdmin> orderList = orderPage.getContent();
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(orderList, HttpStatus.OK), HttpStatus.OK);
+    }
+
+    @PutMapping("/orders/{orderId}/status")
+    public ResponseEntity<ResponseDtoSuccess<OrderResponseRoleAdmin>> changeOrderStatus(
+            @PathVariable Long orderId,
+            @RequestBody FormChangeOrderStatus formChangeOrderStatus) {
+
+        OrderResponseRoleAdmin orderResponseRoleAdmin = orderService.updateOrderStatusById(orderId, formChangeOrderStatus.getOrderStatusName());
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(orderResponseRoleAdmin, HttpStatus.OK), HttpStatus.OK);
     }
 
 
