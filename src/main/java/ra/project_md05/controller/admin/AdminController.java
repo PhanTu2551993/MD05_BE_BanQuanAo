@@ -144,6 +144,7 @@ public class AdminController {
         productService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
     @GetMapping("/products/search")
     public ResponseEntity<?> search(
             @RequestParam(name = "search") String search,

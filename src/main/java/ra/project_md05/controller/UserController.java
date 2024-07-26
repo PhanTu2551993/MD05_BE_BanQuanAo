@@ -141,6 +141,7 @@ public class UserController {
         List<ShoppingCart> cartList = shoppingCartService.findByUser(user);
         List<ShoppingCartResponse> cartResponses = cartList.stream().map(cart ->
                 new ShoppingCartResponse(
+                        cart.getId(),
                         cart.getProduct().getProductId(),
                         cart.getProduct().getProductName(),
                         cart.getProduct().getImage(),
@@ -162,6 +163,7 @@ public class UserController {
 
         List<ShoppingCartResponse> cartResponses = shoppingCartList.stream().map(cart ->
                 new ShoppingCartResponse(
+                        cart.getId(),
                         cart.getProduct().getProductId(),
                         cart.getProduct().getProductName(),
                         cart.getProduct().getImage(),
@@ -172,6 +174,21 @@ public class UserController {
         ).collect(Collectors.toList());
 
         return new ResponseEntity<>(new ResponseDtoSuccess<>(cartResponses, HttpStatus.OK), HttpStatus.OK);
+    }
+
+    @GetMapping("/products/search")
+    public ResponseEntity<?> search(
+            @RequestParam(name = "search") String search,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "3") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductResponse> productPage = productService.findByNameOrDescriptionContaining(search, pageable);
+
+        if (productPage.isEmpty()) {
+            return new ResponseEntity<>("Không tìm thấy Sản phẩm có tên: " + search, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(productPage, HttpStatus.OK);
     }
 
     // xoa 1 sp
