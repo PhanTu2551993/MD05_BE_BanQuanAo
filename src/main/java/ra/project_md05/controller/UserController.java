@@ -220,7 +220,7 @@ public class UserController {
 //        shoppingCartService.removeAllFromCart();
 //        return ResponseEntity.ok().body("đã xóa thành công tất cả sản phẩm trong giỏ hàng");
 //    }
-//
+
 //    @PutMapping("/cart/items/{cartItemId}")
 //    public ResponseEntity<ShoppingCartResponse> updateCartItemQuantity(@PathVariable Long cartItemId,
 //                                                                       @RequestParam Integer quantity) {
