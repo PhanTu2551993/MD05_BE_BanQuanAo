@@ -11,11 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ra.project_md05.exception.CustomException;
-import ra.project_md05.model.dto.request.AddressRequest;
-import ra.project_md05.model.dto.request.ChangePasswordRequest;
-import ra.project_md05.model.dto.request.FormAddToCartRequest;
-import ra.project_md05.model.dto.request.ProductDetailRequest;
-import ra.project_md05.model.dto.request.UpdateUserRequest;
+import ra.project_md05.model.dto.request.*;
 import ra.project_md05.model.dto.response.ProductResponse;
 import ra.project_md05.model.dto.response.ResponseDtoSuccess;
 import ra.project_md05.model.dto.response.ShoppingCartResponse;
@@ -54,8 +50,8 @@ public class UserController {
     private IAddressService addressService;
 //    @Autowired
 //    private IShoppingCartService shoppingCartService;
-//    @Autowired
-//    private IWishListService wishListService;
+    @Autowired
+    private IWishListService wishListService;
 //    @Autowired
 //    private IOrderService orderService;
 
@@ -240,25 +236,25 @@ public class UserController {
 //        return ResponseEntity.ok(orderResponse);
 //    }
 //
-//    @PostMapping("/wish-list")
-//    public ResponseEntity<WishListResponse> addWishList(@RequestBody WishListRequest wishListRequest) {
-//        WishListResponse addedWishList = wishListService.addWishList(wishListRequest);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(addedWishList);
-//    }
-//
-//    @GetMapping("/wish-list")
-//    public ResponseEntity<List<WishListResponse>> getUserWishList() {
-//        List<WishListResponse> wishListResponseList = wishListService.getWishList();
-//        return ResponseEntity.ok(wishListResponseList);
-//
-//    }
-//
-//    @DeleteMapping("/wish-list/{wishListId}")
-//    public ResponseEntity<?> deleteWishList(@PathVariable Long wishListId) {
-//        wishListService.deleteWishList(wishListId);
-//        return ResponseEntity.ok().body("đã xóa thành công sản phẩm trong danh sách yêu thích có ID : " + wishListId);
-//    }
-//
+    @PostMapping("/wish-list")
+    public ResponseEntity<WishList> addWishList(@RequestBody WishListRequest wishListRequest) {
+        WishList addedWishList = wishListService.addWishList(wishListRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedWishList);
+    }
+
+    @GetMapping("/wish-list")
+    public ResponseEntity<List<WishList>> getUserWishList() {
+        List<WishList> wishListResponseList = wishListService.getWishList();
+        return ResponseEntity.ok(wishListResponseList);
+
+    }
+
+    @DeleteMapping("/wish-list/{wishListId}")
+    public ResponseEntity<?> deleteWishList(@PathVariable Long wishListId) {
+        wishListService.deleteWishList(wishListId);
+        return ResponseEntity.ok().body("đã xóa thành công sản phẩm trong danh sách yêu thích có ID : " + wishListId);
+    }
+
 //    @GetMapping("/history")
 //    public ResponseEntity<List<OrderResponse>> getAllOrders() {
 //        List<Order> orders = orderService.getAllUserOrders();
