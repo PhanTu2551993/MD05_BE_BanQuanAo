@@ -12,7 +12,7 @@ import java.util.Map;
 @Setter
 @Getter
 public class ShoppingCartResponse {
-
+    private Long id;
     private Long productId;
     private String productName;
     private String productImage;
