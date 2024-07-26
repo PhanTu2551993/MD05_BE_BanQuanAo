@@ -31,6 +31,13 @@ public class WishListServiceImpl implements IWishListService {
         Product product = productRepository.findById(wishListRequest.getProductId())
                 .orElseThrow(() -> new NoSuchElementException("Không tìm thấy sản phẩm"));
 
+        // Check if the item already exists in the wishlist for the current user
+        boolean alreadyExists = wishListRepository.existsByUserAndProduct(currentUser, product);
+
+        if (alreadyExists) {
+            throw new IllegalArgumentException("Sản phẩm đã có trong danh sách yêu thích");
+        }
+
         WishList newWishList = WishList.builder()
                 .user(currentUser)
                 .product(product)
