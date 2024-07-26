@@ -15,7 +15,8 @@ import java.util.Date;
 public class WishList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "wish_list_id")
+    private Long wishListId;
 
     private Date createdAt;
 
