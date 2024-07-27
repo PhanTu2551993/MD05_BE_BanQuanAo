@@ -31,7 +31,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    @JsonBackReference
+//    @JsonBackReference
     private Product product;
 
     @ManyToOne
