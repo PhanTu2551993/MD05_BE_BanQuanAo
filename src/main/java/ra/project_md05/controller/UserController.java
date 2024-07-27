@@ -58,8 +58,9 @@ public class UserController {
 
     @Autowired
     private ICommentDetailService commentDetailService;
-//    @Autowired
-//    private IOrderService orderService;
+
+    @Autowired
+    private CartItemService cartItemService;
 
     // API: Danh sách Sản phẩm mới: Lấy ra 10 Sản phẩm được thêm gần đây nhất
     @GetMapping("/products/new-products")
@@ -205,6 +206,12 @@ public class UserController {
     public ResponseEntity<?> clearCart(@AuthenticationPrincipal UserDetailCustom customUserDetail) {
         shoppingCartService.deleteShoppingCart(customUserDetail.getUserId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/cart/{id}")
+    public ResponseEntity<ShoppingCart> updateQuantity(@PathVariable Long id, @RequestBody UpdateQuantityRequest request) throws CustomException {
+        ShoppingCart updatedCartItem = cartItemService.updateQuantity(id, request.getQuantity());
+        return ResponseEntity.ok(updatedCartItem);
     }
 
 //    @PostMapping("/account/addresses")
