@@ -201,9 +201,7 @@ public class AdminController {
     public ResponseEntity<ResponseDtoSuccess<OrderResponseRoleAdmin>> changeOrderStatus(
             @PathVariable Long orderId,
             @RequestBody FormChangeOrderStatus formChangeOrderStatus) {
-
-        OrderResponseRoleAdmin orderResponseRoleAdmin = orderService.updateOrderStatusById(orderId, formChangeOrderStatus.getOrderStatusName());
-        return new ResponseEntity<>(new ResponseDtoSuccess<>(orderResponseRoleAdmin, HttpStatus.OK), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDtoSuccess<>( orderService.updateOrderStatusById(orderId, formChangeOrderStatus.getOrderStatusName()), HttpStatus.OK), HttpStatus.OK);
     }
 
 

@@ -20,7 +20,7 @@ public class OrderResponseRoleAdmin {
 
     private Double totalPrice;
 
-    private String status;
+    private OrderStatus status;
 
     private String note;
 

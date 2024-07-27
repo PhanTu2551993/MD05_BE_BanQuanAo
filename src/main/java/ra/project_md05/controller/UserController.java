@@ -66,8 +66,8 @@ public class UserController {
     @GetMapping("/products")
     public ResponseEntity<Page<ProductResponse>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "2") int size,
-            @RequestParam(defaultValue = "productId") String sortBy,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "productName") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
         Page<ProductResponse> products = productService.getAllProducts(page, size, sortBy, sortDir);
         return new ResponseEntity<>(products, HttpStatus.OK);
