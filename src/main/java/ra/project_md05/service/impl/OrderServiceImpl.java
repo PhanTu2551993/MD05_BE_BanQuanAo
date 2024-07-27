@@ -47,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
         for (Orders order : orderRepositoryByStatusOrderStatusName) {
             OrderResponseRoleAdmin orderResponseRoleAdmin = OrderResponseRoleAdmin.builder()
                     .orderId(order.getId())
-                    .status(order.getStatus().name())
+                    .status(order.getStatus())
                     .serialNumber(order.getSerialNumber())
                     .receiveAddress(order.getStreetAddress())
                     .totalPrice(order.getTotalPrice())
@@ -65,11 +65,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseRoleAdmin updateOrderStatusById(Long orderId, OrderStatus status) {
-        Orders order = orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("Order not found"));
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NoSuchElementException("Order not found"));
         order.setStatus(status);
         orderRepository.save(order);
-
-        return null;
+        return OrderResponseRoleAdmin.builder()
+                .orderId(order.getId())
+                .serialNumber(order.getSerialNumber())
+                .userName(order.getUser().getUsername())
+                .receiveName(order.getReceiveName())
+                .receiveAddress(order.getStreetAddress())
+                .totalPrice(order.getTotalPrice())
+                .status(order.getStatus())
+                .build();
     }
 
 }

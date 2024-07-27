@@ -9,7 +9,6 @@ import ra.project_md05.model.dto.request.ProductRequest;
 import ra.project_md05.model.dto.response.ProductResponse;
 import ra.project_md05.model.entity.Category;
 import ra.project_md05.model.entity.Product;
-import ra.project_md05.model.entity.ProductDetail;
 import ra.project_md05.repository.BrandRepository;
 import ra.project_md05.repository.CategoryRepository;
 import ra.project_md05.repository.ProductDetailRepository;
@@ -40,11 +39,27 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> getAllProducts(int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Product> productPage = productRepository.findAll(pageable);
-        return productPage.map(this::convertToResponse);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDir), sortBy));
+        return productRepository.findAll(pageable).map(this::mapToProductResponse);
     }
+
+
+    private ProductResponse mapToProductResponse(Product product) {
+            return ProductResponse.builder()
+                    .id(product.getProductId())
+                    .productName(product.getProductName())
+                    .sku(product.getSku())
+                    .description(product.getDescription())
+                    .imageUrl(product.getImage())
+                    .status(product.getStatus())
+                    .stock(product.getStock())
+                    .price(product.getPrice())
+                    .categoryId(product.getCategory().getCategoryId())
+                    .brandId(product.getBrand().getId())
+                    .createdAt(product.getCreatedAt())
+                    .build();
+        }
+
 
     @Override
     public ProductResponse createProduct(ProductRequest productRequest) {
