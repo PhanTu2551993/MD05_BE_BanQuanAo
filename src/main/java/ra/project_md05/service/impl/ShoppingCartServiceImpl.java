@@ -12,6 +12,7 @@ import ra.project_md05.service.IUserService;
 import ra.project_md05.service.ShoppingCartService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
@@ -114,5 +115,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 shoppingCartRepository.delete(cart);
             }
         }
+    }
+
+    public Optional<ShoppingCart> findByProductIdAndUserId(Long productId, Long userId) {
+        return Optional.ofNullable(shoppingCartRepository.findByProductIdAndUserId(productId, userId));
+    }
+
+    public ShoppingCart save(ShoppingCart shoppingCart) {
+        return shoppingCartRepository.save(shoppingCart);
     }
 }

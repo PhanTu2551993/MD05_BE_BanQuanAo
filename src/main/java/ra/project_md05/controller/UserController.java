@@ -31,6 +31,7 @@ import ra.project_md05.service.ShoppingCartService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -313,6 +314,24 @@ public class UserController {
     @GetMapping("/commentDetails/comment/{commentId}")
     public List<CommentDetail> getCommentDetailsByComment(@PathVariable Long commentId) {
         return commentDetailService.getCommentDetailsByComment(commentId);
+    }
+
+    @PutMapping("/items/{productId}")
+    public ResponseEntity<?> updateCartItemQuantity(
+            @PathVariable Long productId,
+            @RequestParam Long userId,
+            @RequestBody ShoppingCart updatedCartItem) {
+
+        Optional<ShoppingCart> existingCartItemOpt = shoppingCartService.findByProductIdAndUserId(productId, userId);
+
+        if (existingCartItemOpt.isPresent()) {
+            ShoppingCart existingCartItem = existingCartItemOpt.get();
+            existingCartItem.setOrderQuantity(updatedCartItem.getOrderQuantity());
+            shoppingCartService.save(existingCartItem);
+            return ResponseEntity.ok(existingCartItem);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 //    @GetMapping("/history")
