@@ -54,7 +54,7 @@ public class UserController {
     private IWishListService wishListService;
 
     @Autowired
-    private ICommentService commentService;
+    private CommentService commentService;
 
     @Autowired
     private ICommentDetailService commentDetailService;

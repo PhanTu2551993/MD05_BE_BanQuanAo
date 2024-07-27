@@ -13,14 +13,14 @@ import ra.project_md05.constants.EHttpStatus;
 
 import ra.project_md05.model.dto.response.ResponseWrapper;
 import ra.project_md05.model.entity.Comment;
-import ra.project_md05.repository.ICommentRepository;
+import ra.project_md05.repository.CommentRepository;
 import ra.project_md05.service.CommentService;
 
 @RestController
 @RequestMapping("/api/v1/admin/comment")
 public class CommentsController {
     @Autowired
-    private ICommentRepository commentRepository;
+    private CommentRepository commentRepository;
     @Autowired
     private CommentService commentService;
     @GetMapping()
