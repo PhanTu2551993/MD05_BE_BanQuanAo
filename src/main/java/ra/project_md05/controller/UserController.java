@@ -52,6 +52,12 @@ public class UserController {
 //    private IShoppingCartService shoppingCartService;
     @Autowired
     private IWishListService wishListService;
+
+    @Autowired
+    private ICommentService commentService;
+
+    @Autowired
+    private ICommentDetailService commentDetailService;
 //    @Autowired
 //    private IOrderService orderService;
 
@@ -285,6 +291,28 @@ public class UserController {
     public ResponseEntity<?> deleteWishList(@PathVariable Long wishListId) {
         wishListService.deleteWishList(wishListId);
         return ResponseEntity.ok().body("đã xóa thành công sản phẩm trong danh sách yêu thích có ID : " + wishListId);
+    }
+
+    @PostMapping("/comments")
+    public Comment addComment(@RequestBody CommentsRequest commentsRequest) {
+        return commentService.addComment(commentsRequest);
+    }
+
+    @GetMapping("/comments/product/{productId}")
+    public ResponseEntity<List<Comment>> getCommentsByProduct(@PathVariable Long productId) {
+        List<Comment> commentList = commentService.getCommentsByProduct(productId);
+        return ResponseEntity.ok(commentList);
+
+    }
+
+    @PostMapping("/commentDetails")
+    public CommentDetail addCommentDetail(@RequestBody CommentDetail commentDetail) {
+        return commentDetailService.addCommentDetail(commentDetail);
+    }
+
+    @GetMapping("/commentDetails/comment/{commentId}")
+    public List<CommentDetail> getCommentDetailsByComment(@PathVariable Long commentId) {
+        return commentDetailService.getCommentDetailsByComment(commentId);
     }
 
 //    @GetMapping("/history")

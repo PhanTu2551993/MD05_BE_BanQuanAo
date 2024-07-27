@@ -16,6 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, PagingA
     Page<Product> findByProductNameContainingOrDescriptionContaining(String name, String description, Pageable pageable);
     List<Product> findByCategory(Category category);
 
+
     @Query("SELECT p FROM Product p WHERE p.productName LIKE %:searchTerm% OR p.description LIKE %:searchTerm%")
     List<Product> findByNameOrDescriptionContaining(@Param("searchTerm") String searchTerm);
     Page<Product> findByProductNameContainingIgnoreCase(String keyword, Pageable pageable);

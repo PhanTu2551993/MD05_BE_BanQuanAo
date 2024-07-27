@@ -1,5 +1,6 @@
 package ra.project_md05.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,5 +51,9 @@ public class Product {
 
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @OneToMany(mappedBy = "product")
+    @JsonManagedReference
+    private List<Comment> comments;
 
 }
