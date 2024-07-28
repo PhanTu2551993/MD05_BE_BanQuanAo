@@ -20,8 +20,8 @@ import java.util.List;
 @Service
 public class UploadService {
     // bucketname
-//    private static final String bucketName = "upload-reactjs-bc36f.appspot.com";
-    private static final String bucketName = "projectmd05-26f5d.appspot.com";
+    private static final String bucketName = "upload-reactjs-bc36f.appspot.com";
+//    private static final String bucketName = "projectmd05-26f5d.appspot.com";
     // lấy ra đường dẫn gốc trên server
     @Autowired
     private ServletContext servletContext;
