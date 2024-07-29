@@ -20,9 +20,9 @@ public class OrderDetail {
     @JoinColumn(name = "order_id", nullable = false)
     private Orders order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_detail_id", nullable = false)
-    private ProductDetail productDetail;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "product_detail_id", nullable = false)
+//    private ProductDetail productDetail;
 
     @Column(name = "oder_detail_name", nullable = false)
     private String name;

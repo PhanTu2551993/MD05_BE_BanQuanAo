@@ -12,10 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ra.project_md05.exception.CustomException;
 import ra.project_md05.model.dto.request.*;
-import ra.project_md05.model.dto.response.ProductResponse;
-import ra.project_md05.model.dto.response.ResponseDtoSuccess;
-import ra.project_md05.model.dto.response.ShoppingCartResponse;
-import ra.project_md05.model.dto.response.UserResponse;
+import ra.project_md05.model.dto.response.*;
 import ra.project_md05.model.dto.response.converter.UserConverter;
 import ra.project_md05.model.entity.*;
 import ra.project_md05.security.principal.UserDetailCustom;
@@ -62,6 +59,15 @@ public class UserController {
 
     @Autowired
     private CartItemService cartItemService;
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private OrderDetailService orderDetailService; ;
+    @Autowired
+    private ICouponsService couponsService;
+    @Autowired
+    private IBannerService bannerService;
 
     // API: Danh sách Sản phẩm mới: Lấy ra 10 Sản phẩm được thêm gần đây nhất
     @GetMapping("/products/new-products")
@@ -195,6 +201,11 @@ public class UserController {
         return new ResponseEntity<>(productPage, HttpStatus.OK);
     }
 
+    @GetMapping("/banners")
+    public ResponseEntity<?> getBanner() {
+        return new ResponseEntity<>( bannerService.getAllBanners(), HttpStatus.OK);
+    }
+
     // xoa 1 sp
     @DeleteMapping("/cart/items/{cartItemId}")
     public ResponseEntity<?> getCartItem(@AuthenticationPrincipal UserDetailCustom customUserDetail, @PathVariable Long cartItemId) {
@@ -323,22 +334,30 @@ public class UserController {
         return commentDetailService.getCommentDetailsByComment(commentId);
     }
 
-    @PutMapping("/items/{productId}")
-    public ResponseEntity<?> updateCartItemQuantity(
-            @PathVariable Long productId,
-            @RequestParam Long userId,
-            @RequestBody ShoppingCart updatedCartItem) {
+    @PostMapping("/checkout")
+    public ResponseEntity<Orders> createOrder(@RequestBody OrderRequest orderRequest) {
+        Orders savedOrder = orderService.addOrderUser(orderRequest);
+        return ResponseEntity.ok(savedOrder);
+    }
 
-        Optional<ShoppingCart> existingCartItemOpt = shoppingCartService.findByProductIdAndUserId(productId, userId);
+    @PostMapping("coupons/validate")
+    public ResponseEntity<CouponsUserResponse> validateCoupon(@RequestBody CouponsUserRequest couponRequest) {
+        return couponsService.validateCoupon(couponRequest.getCode())
+                .map(coupon -> ResponseEntity.ok(new CouponsUserResponse(true, coupon.getDiscount(), coupon.getCouponsId())))
+                .orElseGet(() -> ResponseEntity.ok(new CouponsUserResponse(false, 0, null)));
+    }
 
-        if (existingCartItemOpt.isPresent()) {
-            ShoppingCart existingCartItem = existingCartItemOpt.get();
-            existingCartItem.setOrderQuantity(updatedCartItem.getOrderQuantity());
-            shoppingCartService.save(existingCartItem);
-            return ResponseEntity.ok(existingCartItem);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/orders")
+    public ResponseEntity<?> getAllOrder(Pageable pageable) {
+        Page<OrderResponseRoleAdmin> orderPage = orderService.getAllOrderRoleAdmin(pageable);
+        List<OrderResponseRoleAdmin> orderList = orderPage.getContent();
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(orderList, HttpStatus.OK), HttpStatus.OK);
+    }
+
+    @GetMapping("/ordersdetail")
+    public ResponseEntity<?> getAllOrderDetail(Long ordersId) {
+        List<OrderDetail> orderDetailList = orderDetailService.getAllOrderDetail(ordersId);
+        return new ResponseEntity<>(new ResponseDtoSuccess<>(orderDetailList, HttpStatus.OK), HttpStatus.OK);
     }
 
 //    @GetMapping("/history")

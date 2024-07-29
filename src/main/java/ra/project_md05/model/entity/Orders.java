@@ -5,6 +5,7 @@ import lombok.*;
 import ra.project_md05.constants.OrderStatus;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -45,4 +46,9 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Users user;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderDetail> orderDetails;
+
+
 }
