@@ -9,8 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ra.project_md05.constants.OrderStatus;
 import ra.project_md05.exception.DataNotFoundException;
+import ra.project_md05.model.dto.request.OrderRequest;
 import ra.project_md05.model.dto.response.OrderResponseRoleAdmin;
-import ra.project_md05.model.entity.Orders;
+import ra.project_md05.model.entity.*;
+import ra.project_md05.repository.CouponsRepository;
 import ra.project_md05.repository.OrderDetailRepository;
 import ra.project_md05.repository.OrderRepository;
 import ra.project_md05.repository.ProductRepository;
@@ -18,6 +20,7 @@ import ra.project_md05.service.IUserService;
 import ra.project_md05.service.OrderService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -27,6 +30,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+    @Autowired
+    private CouponsRepository couponsRepository;
     @Autowired
     private ProductRepository productRepository;
 
@@ -78,6 +83,48 @@ public class OrderServiceImpl implements OrderService {
                 .totalPrice(order.getTotalPrice())
                 .status(order.getStatus())
                 .build();
+    }
+
+    @Override
+    public Orders addOrderUser(OrderRequest orderRequest) {
+        Users currentUser = userService.getCurrentLoggedInUser();
+        Orders order = Orders.builder()
+                .user(currentUser)
+                .createdAt(new Date())
+                .district(orderRequest.getDistrict())
+                .note(orderRequest.getNote())
+                .phone(orderRequest.getPhone())
+                .province(orderRequest.getProvince())
+                .receiveAt(orderRequest.getReceiveAt())
+                .receiveName(orderRequest.getReceiveName())
+//                .serialNumber(orderRequest.getSerialNumber())
+                .status(OrderStatus.WAITING)
+                .streetAddress(orderRequest.getStreetAddress())
+                .totalDiscountedPrice(orderRequest.getTotalDiscountedPrice())
+                .totalPrice(orderRequest.getTotalPrice())
+                .totalPriceAfterCoupons(orderRequest.getTotalPriceAfterCoupons())
+                .ward(orderRequest.getWard())
+                .build();
+        if (orderRequest.getCouponsId() != null) {
+            Coupons coupon = couponsRepository.findById(orderRequest.getCouponsId())
+                    .orElseThrow(() -> new RuntimeException("Coupon not found"));
+            order.setCoupon(coupon);
+        }
+        Orders savedOrder = orderRepository.save(order);
+
+        List<OrderDetail> orderDetails = orderRequest.getOrderDetails().stream()
+                .map(detailRequest -> OrderDetail.builder()
+                        .order(savedOrder)
+//                        .productDetail(productDetailRepository.findById(detailRequest.getProductDetailId()).orElseThrow())
+                        .name(detailRequest.getName())
+                        .unitPrice(detailRequest.getUnitPrice())
+                        .orderQuantity(detailRequest.getOrderQuantity())
+                        .build())
+                .collect(Collectors.toList());
+
+        orderDetailRepository.saveAll(orderDetails);
+
+        return savedOrder;
     }
 
 }

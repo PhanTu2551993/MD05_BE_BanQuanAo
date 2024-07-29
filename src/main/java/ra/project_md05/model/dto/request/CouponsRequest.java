@@ -12,7 +12,7 @@ import java.util.Date;
 public class CouponsRequest {
 
     private String code;
-    private String discount;
+    private Integer discount;
     private Date endDate;
     private Integer quantity;
     private Date startDate;

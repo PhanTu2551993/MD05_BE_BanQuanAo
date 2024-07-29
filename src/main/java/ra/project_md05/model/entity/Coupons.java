@@ -19,7 +19,7 @@ public class Coupons {
     private Long couponsId;
 
     private String code;
-    private String discount;
+    private Integer discount;
     private Date endDate;
     private Integer quantity;
     private Date startDate;

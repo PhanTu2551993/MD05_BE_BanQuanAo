@@ -9,6 +9,7 @@ import ra.project_md05.service.ICouponsService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class CouponsServiceImpl implements ICouponsService {
@@ -37,5 +38,10 @@ public class CouponsServiceImpl implements ICouponsService {
     public void deleteCoupons(Long id) {
         Coupons coupons = couponsRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Coupons not found"));
         couponsRepository.delete(coupons);
+    }
+
+    @Override
+    public Optional<Coupons> validateCoupon(String code) {
+        return couponsRepository.findByCodeAndStatusIsTrue(code);
     }
 }
